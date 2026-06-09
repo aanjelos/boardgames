@@ -1341,8 +1341,12 @@ function App() {
     if (filterTime !== null) {
       result = result.filter(g => {
         const t = parseInt(g.playTime) || 0;
-        if (filterTime === '60+') return t > 60;
-        return t > 0 && t <= parseInt(filterTime);
+        if (filterTime === 'quick')  return t > 0 && t <= 15;
+        if (filterTime === '15-30')  return t > 15 && t <= 30;
+        if (filterTime === '30-45')  return t > 30 && t <= 45;
+        if (filterTime === '45-60')  return t > 45 && t <= 60;
+        if (filterTime === '60+')    return t > 60;
+        return true;
       });
     }
     return result;
@@ -1440,7 +1444,7 @@ function App() {
     }, p)),
     /*#__PURE__*/React.createElement("div", { className: "w-px h-5 bg-[#F1F1F1]/10 mx-1 shrink-0" }),
     /*#__PURE__*/React.createElement("span", { className: "text-[10px] text-[#F1F1F1]/30 uppercase font-bold tracking-widest shrink-0" }, "Time"),
-    [['\u226415m', '15'], ['\u226430m', '30'], ['\u226460m', '60'], ['60m+', '60+']].map(([label, val]) => /*#__PURE__*/React.createElement("button", {
+    [['Quick', 'quick'], ['15–30m', '15-30'], ['30–45m', '30-45'], ['45–60m', '45-60'], ['60m+', '60+']].map(([label, val]) => /*#__PURE__*/React.createElement("button", {
       key: val,
       onClick: () => setFilterTime(filterTime === val ? null : val),
       className: `px-3 py-1.5 rounded-full border text-xs font-bold shrink-0 transition-all ${
