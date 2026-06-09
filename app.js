@@ -1112,6 +1112,10 @@ function App() {
   // NEW: Toggle for Games count (Owned vs All)
   const [showAllGamesCount, setShowAllGamesCount] = useState(false);
 
+  // Filter states
+  const [filterPlayers, setFilterPlayers] = useState(null);
+  const [filterTime, setFilterTime] = useState(null);
+
   // New Request Feature States
   const [isRequestMode, setIsRequestMode] = useState(false);
   const [selectedRequestGames, setSelectedRequestGames] = useState([]);
@@ -1327,8 +1331,23 @@ function App() {
       if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
       return 0;
     });
+    if (filterPlayers !== null) {
+      result = result.filter(g => {
+        const min = parseInt(g.minPlayers) || 0;
+        const max = parseInt(g.maxPlayers) || 99;
+        if (filterPlayers === 5) return max >= 5;
+        return min <= filterPlayers && max >= filterPlayers;
+      });
+    }
+    if (filterTime !== null) {
+      result = result.filter(g => {
+        const t = parseInt(g.playTime) || 0;
+        if (filterTime === '60+') return t > 60;
+        return t > 0 && t <= parseInt(filterTime);
+      });
+    }
     return result;
-  }, [games, searchTerm, sortBy, sortOrder]);
+  }, [games, searchTerm, sortBy, sortOrder, filterPlayers, filterTime]);
 
   // SECTION SPLITTING LOGIC
   const {
@@ -1405,7 +1424,38 @@ function App() {
     className: "max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12"
   }, isRequestMode && /*#__PURE__*/React.createElement("div", {
     className: "mb-6 bg-[#C51728]/10 border border-[#C51728]/20 text-[#C51728] px-4 py-3 rounded-xl text-center text-sm md:text-base font-medium animate-slide-up"
-  }, "Tap games to select for the meetup."), /*#__PURE__*/React.createElement("div", {
+  }, "Tap games to select for the meetup."),
+  /* Filter Chips Row */
+  !isRequestMode && /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 overflow-x-auto no-scrollbar mb-8 md:mb-10 -mt-2 md:-mt-4 pb-1"
+  },
+    /*#__PURE__*/React.createElement("span", { className: "text-[10px] text-[#F1F1F1]/30 uppercase font-bold tracking-widest shrink-0" }, "Players"),
+    [2, 3, 4, 5].map(p => /*#__PURE__*/React.createElement("button", {
+      key: p,
+      onClick: () => setFilterPlayers(filterPlayers === p ? null : p),
+      className: `px-3 py-1.5 rounded-full border text-xs font-bold shrink-0 transition-all ${
+        filterPlayers === p
+          ? 'bg-[#C51728] border-[#C51728] text-white shadow-[0_0_10px_rgba(197,23,40,0.4)]'
+          : 'bg-[#F1F1F1]/5 border-[#F1F1F1]/10 text-[#F1F1F1]/60 hover:bg-[#F1F1F1]/10 hover:text-white'
+      }`
+    }, p === 5 ? '5+' : p)),
+    /*#__PURE__*/React.createElement("div", { className: "w-px h-5 bg-[#F1F1F1]/10 mx-1 shrink-0" }),
+    /*#__PURE__*/React.createElement("span", { className: "text-[10px] text-[#F1F1F1]/30 uppercase font-bold tracking-widest shrink-0" }, "Time"),
+    [['\u226415m', '15'], ['\u226430m', '30'], ['\u226460m', '60'], ['60m+', '60+']].map(([label, val]) => /*#__PURE__*/React.createElement("button", {
+      key: val,
+      onClick: () => setFilterTime(filterTime === val ? null : val),
+      className: `px-3 py-1.5 rounded-full border text-xs font-bold shrink-0 transition-all ${
+        filterTime === val
+          ? 'bg-[#C51728] border-[#C51728] text-white shadow-[0_0_10px_rgba(197,23,40,0.4)]'
+          : 'bg-[#F1F1F1]/5 border-[#F1F1F1]/10 text-[#F1F1F1]/60 hover:bg-[#F1F1F1]/10 hover:text-white'
+      }`
+    }, label)),
+    (filterPlayers !== null || filterTime !== null) && /*#__PURE__*/React.createElement("button", {
+      onClick: () => { setFilterPlayers(null); setFilterTime(null); },
+      className: "ml-1 px-3 py-1.5 rounded-full border border-[#F1F1F1]/10 text-xs text-[#F1F1F1]/40 hover:text-white hover:border-[#F1F1F1]/30 shrink-0 transition-all"
+    }, "Clear")
+  ),
+  /*#__PURE__*/React.createElement("div", {
     className: "flex flex-col md:flex-row gap-4 md:gap-6 mb-8 md:mb-12"
   }, /*#__PURE__*/React.createElement("div", {
     className: "relative flex-1 group"
