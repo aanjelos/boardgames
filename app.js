@@ -690,6 +690,7 @@ function GameCard({
     }, game.image ? /*#__PURE__*/React.createElement("img", {
       src: game.image,
       alt: game.name,
+      loading: "lazy",
       className: "w-full h-full object-cover"
     }) : /*#__PURE__*/React.createElement(Icons.Box, {
       className: "w-5 h-5 md:w-6 md:h-6 text-[#F1F1F1]/20"
@@ -758,6 +759,7 @@ function GameCard({
   }, game.image ? /*#__PURE__*/React.createElement("img", {
     src: game.image,
     alt: game.name,
+    loading: "lazy",
     className: "w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
   }) : /*#__PURE__*/React.createElement("div", {
     className: "absolute inset-0 flex items-center justify-center text-[#F1F1F1]/10"
@@ -906,6 +908,7 @@ function GameDetailModal({
   }, game.image ? /*#__PURE__*/React.createElement("img", {
     src: game.image,
     alt: game.name,
+    loading: "lazy",
     className: "w-full h-full object-cover opacity-60"
   }) : /*#__PURE__*/React.createElement("div", {
     className: "w-full h-full"
@@ -1468,12 +1471,25 @@ function App() {
     onClick: () => setViewMode('list'),
     icon: Icons.List
   })))), loading ? /*#__PURE__*/React.createElement("div", {
-    className: "flex flex-col items-center justify-center py-32 text-[#F1F1F1]/40"
+    className: "grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4 lg:gap-8"
+  }, Array.from({length: 8}).map((_, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: "border border-[#F1F1F1]/5 rounded-3xl overflow-hidden bg-[#F1F1F1]/[0.02] animate-pulse"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "w-8 h-8 border-2 border-[#C51728] border-t-transparent rounded-full animate-spin mb-4"
-  }), /*#__PURE__*/React.createElement("p", {
-    className: "text-sm"
-  }, "Loading collection...")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "w-full aspect-[4/3] bg-[#F1F1F1]/5"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "p-4 space-y-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "h-4 bg-[#F1F1F1]/10 rounded-full w-3/4"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-3 gap-2 pt-2"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "h-6 bg-[#F1F1F1]/10 rounded-lg"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "h-6 bg-[#F1F1F1]/10 rounded-lg"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "h-6 bg-[#C51728]/10 rounded-lg"
+  })))))) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: viewMode === 'grid' ? "grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4 lg:gap-8" : "flex flex-col gap-3"
   }, ownedGames.map(game => /*#__PURE__*/React.createElement(GameCard, {
     key: game.id,

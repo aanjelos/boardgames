@@ -1,0 +1,12 @@
+# Node / npm
+node_modules/
+package.json
+package-lock.json
+
+# Build tooling scripts
+build.js
+compress-images.js
+
+# OS files
+.DS_Store
+Thumbs.db
