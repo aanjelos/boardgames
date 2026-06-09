@@ -1335,7 +1335,6 @@ function App() {
       result = result.filter(g => {
         const min = parseInt(g.minPlayers) || 0;
         const max = parseInt(g.maxPlayers) || 99;
-        if (filterPlayers === 5) return max >= 5;
         return min <= filterPlayers && max >= filterPlayers;
       });
     }
@@ -1430,7 +1429,7 @@ function App() {
     className: "flex items-center gap-2 overflow-x-auto no-scrollbar mb-8 md:mb-10 -mt-2 md:-mt-4 pb-1"
   },
     /*#__PURE__*/React.createElement("span", { className: "text-[10px] text-[#F1F1F1]/30 uppercase font-bold tracking-widest shrink-0" }, "Players"),
-    [2, 3, 4, 5].map(p => /*#__PURE__*/React.createElement("button", {
+    [2, 3, 4, 5, 8, 10, 12, 15].map(p => /*#__PURE__*/React.createElement("button", {
       key: p,
       onClick: () => setFilterPlayers(filterPlayers === p ? null : p),
       className: `px-3 py-1.5 rounded-full border text-xs font-bold shrink-0 transition-all ${
@@ -1438,7 +1437,7 @@ function App() {
           ? 'bg-[#C51728] border-[#C51728] text-white shadow-[0_0_10px_rgba(197,23,40,0.4)]'
           : 'bg-[#F1F1F1]/5 border-[#F1F1F1]/10 text-[#F1F1F1]/60 hover:bg-[#F1F1F1]/10 hover:text-white'
       }`
-    }, p === 5 ? '5+' : p)),
+    }, p)),
     /*#__PURE__*/React.createElement("div", { className: "w-px h-5 bg-[#F1F1F1]/10 mx-1 shrink-0" }),
     /*#__PURE__*/React.createElement("span", { className: "text-[10px] text-[#F1F1F1]/30 uppercase font-bold tracking-widest shrink-0" }, "Time"),
     [['\u226415m', '15'], ['\u226430m', '30'], ['\u226460m', '60'], ['60m+', '60+']].map(([label, val]) => /*#__PURE__*/React.createElement("button", {
