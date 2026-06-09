@@ -691,7 +691,8 @@ function GameCard({
       src: game.image,
       alt: game.name,
       loading: "lazy",
-      className: "w-full h-full object-cover"
+      className: "w-full h-full object-cover",
+      onError: e => { e.currentTarget.style.display = 'none'; e.currentTarget.nextSibling && (e.currentTarget.nextSibling.style.display = 'flex'); }
     }) : /*#__PURE__*/React.createElement(Icons.Box, {
       className: "w-5 h-5 md:w-6 md:h-6 text-[#F1F1F1]/20"
     }), game.expansions?.length > 0 && /*#__PURE__*/React.createElement("div", {
@@ -760,7 +761,8 @@ function GameCard({
     src: game.image,
     alt: game.name,
     loading: "lazy",
-    className: "w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+    className: "w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100",
+    onError: e => { e.currentTarget.style.display = 'none'; }
   }) : /*#__PURE__*/React.createElement("div", {
     className: "absolute inset-0 flex items-center justify-center text-[#F1F1F1]/10"
   }, /*#__PURE__*/React.createElement(Icons.Box, {
@@ -909,7 +911,8 @@ function GameDetailModal({
     src: game.image,
     alt: game.name,
     loading: "lazy",
-    className: "w-full h-full object-cover opacity-60"
+    className: "w-full h-full object-cover opacity-60",
+    onError: e => { e.currentTarget.style.display = 'none'; }
   }) : /*#__PURE__*/React.createElement("div", {
     className: "w-full h-full"
   }), /*#__PURE__*/React.createElement("div", {
@@ -1099,6 +1102,7 @@ function GameDetailModal({
 function App() {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('overall');
   const [sortOrder, setSortOrder] = useState('desc');
@@ -1172,6 +1176,7 @@ function App() {
         },
         error: err => {
           console.error("CSV Parse Error:", err);
+          setFetchError(true);
           setLoading(false);
         }
       });
@@ -1470,7 +1475,15 @@ function App() {
     active: viewMode === 'list',
     onClick: () => setViewMode('list'),
     icon: Icons.List
-  })))), loading ? /*#__PURE__*/React.createElement("div", {
+  })))), fetchError ? /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-col items-center justify-center py-32 text-center"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "text-4xl mb-4"
+  }, "\uD83D\uDCE1"), /*#__PURE__*/React.createElement("h2", {
+    className: "text-lg font-bold text-[#F1F1F1]/80 mb-2"
+  }, "Couldn\u2019t load the collection"), /*#__PURE__*/React.createElement("p", {
+    className: "text-sm text-[#F1F1F1]/40 max-w-xs"
+  }, "There was a problem fetching the game data. Check your connection and try refreshing the page.")) : loading ? /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4 lg:gap-8"
   }, Array.from({length: 8}).map((_, i) => /*#__PURE__*/React.createElement("div", {
     key: i,
