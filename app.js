@@ -663,6 +663,12 @@ function GameCard({
       onOpenDetail(game);
     }
   };
+  const handleKeyDown = e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick(e);
+    }
+  };
 
   // Request Mode Overlay Logic
   const requestOverlay = isRequestMode && /*#__PURE__*/React.createElement(React.Fragment, null, isSelected && /*#__PURE__*/React.createElement("div", {
@@ -677,6 +683,9 @@ function GameCard({
   if (!isGrid) {
     return /*#__PURE__*/React.createElement("div", {
       onClick: handleClick,
+      onKeyDown: handleKeyDown,
+      role: "button",
+      tabIndex: 0,
       className: `group flex items-center gap-3 md:gap-6 border p-3 md:p-4 rounded-2xl transition-all cursor-pointer relative overflow-hidden
                             ${isRequestMode && isSelected ? 'bg-[#C51728]/10 border-[#C51728]' : ''}
                             ${!isRequestMode && isOwned ? 'bg-[#F1F1F1]/5 border-[#F1F1F1]/5 hover:bg-[#F1F1F1]/10 hover:border-[#C51728]/30' : ''} 
@@ -748,6 +757,9 @@ function GameCard({
   }
   return /*#__PURE__*/React.createElement("div", {
     onClick: handleClick,
+    onKeyDown: handleKeyDown,
+    role: "button",
+    tabIndex: 0,
     className: `group relative border rounded-3xl overflow-hidden transition-all duration-300 cursor-pointer flex flex-col 
                         ${isRequestMode && isSelected ? 'bg-[#1F1F1F]' : ''}
                         ${!isRequestMode && isOwned ? 'bg-[#F1F1F1]/5 border-[#F1F1F1]/5 hover:border-[#C51728]/40 hover:shadow-2xl hover:shadow-[#C51728]/10' : 'bg-[#F1F1F1]/[0.02] border-[#F1F1F1]/5'}
@@ -839,41 +851,87 @@ function RequestBar({
   }), /*#__PURE__*/React.createElement("div", {
     className: "fixed bottom-6 left-0 right-0 px-4 md:px-0 z-50 flex justify-center animate-slide-up"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "bg-[#1F1F1F] border border-[#F1F1F1]/10 shadow-2xl rounded-full p-2 pl-6 flex items-center gap-4 max-w-lg w-full ring-1 ring-[#C51728]/20"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "flex flex-col justify-center"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "text-xs text-[#F1F1F1]/40 uppercase font-bold tracking-widest"
-  }, "Request"), /*#__PURE__*/React.createElement("div", {
-    className: "text-[#F1F1F1] font-bold"
-  }, selectedGames.length, " Game", selectedGames.length !== 1 ? 's' : '')), /*#__PURE__*/React.createElement("div", {
-    className: "flex-1"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "flex items-center gap-2"
-  }, /*#__PURE__*/React.createElement("button", {
-    onClick: handleCopy,
-    className: "p-3 rounded-full hover:bg-[#F1F1F1]/10 text-[#F1F1F1]/60 hover:text-white transition-colors",
-    title: "Copy Text"
-  }, /*#__PURE__*/React.createElement(Icons.Clipboard, null)), /*#__PURE__*/React.createElement("button", {
-    onClick: handleWhatsApp,
-    className: "bg-[#25D366] hover:bg-[#128C7E] text-white p-3 rounded-full shadow-lg transition-colors flex items-center gap-2"
-  }, /*#__PURE__*/React.createElement(Icons.WhatsApp, null), /*#__PURE__*/React.createElement("span", {
-    className: "font-bold text-sm hidden sm:inline"
-  }, "Send"))))));
+    className: "bg-[#1F1F1F] border border-[#F1F1F1]/10 shadow-2xl rounded-2xl p-3 pl-4 flex flex-col gap-2 max-w-lg w-full ring-1 ring-[#C51728]/20"
+  },
+    /* Top row: count label + action buttons */
+    /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center gap-3"
+    },
+      /*#__PURE__*/React.createElement("div", {
+        className: "flex flex-col justify-center flex-1"
+      },
+        /*#__PURE__*/React.createElement("div", {
+          className: "text-xs text-[#F1F1F1]/40 uppercase font-bold tracking-widest leading-none mb-0.5"
+        }, "Request"),
+        /*#__PURE__*/React.createElement("div", {
+          className: "text-[#F1F1F1] font-bold"
+        }, selectedGames.length, " Game", selectedGames.length !== 1 ? 's' : '', " / ", REQUEST_LIMIT)
+      ),
+      /*#__PURE__*/React.createElement("div", {
+        className: "flex items-center gap-2"
+      },
+        /*#__PURE__*/React.createElement("button", {
+          onClick: handleCopy,
+          className: "p-2.5 rounded-full hover:bg-[#F1F1F1]/10 text-[#F1F1F1]/60 hover:text-white transition-colors",
+          title: "Copy Text"
+        }, /*#__PURE__*/React.createElement(Icons.Clipboard, null)),
+        /*#__PURE__*/React.createElement("button", {
+          onClick: handleWhatsApp,
+          className: "bg-[#25D366] hover:bg-[#128C7E] text-white px-4 py-2.5 rounded-full shadow-lg transition-colors flex items-center gap-2"
+        }, /*#__PURE__*/React.createElement(Icons.WhatsApp, null), /*#__PURE__*/React.createElement("span", {
+          className: "font-bold text-sm hidden sm:inline"
+        }, "Send"))
+      )
+    ),
+    /* Selected game names — horizontally scrollable pill list */
+    /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center gap-1.5 overflow-x-auto no-scrollbar"
+    }, selectedGames.map((g, i) =>
+      /*#__PURE__*/React.createElement("span", {
+        key: g.id,
+        className: "shrink-0 text-[10px] font-bold bg-[#C51728]/15 border border-[#C51728]/25 text-[#C51728] px-2.5 py-1 rounded-full whitespace-nowrap"
+      }, `${i + 1}. ${g.name}`)
+    ))
+  )));
 }
 function GameDetailModal({
   game,
   onClose
 }) {
   // REMOVED: if (!game) return null; (Handled by parent now)
+  const modalRef = React.useRef(null);
+  const closeButtonRef = React.useRef(null);
 
-  // Add Effect to lock scrolling
+  // Lock scrolling
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = '';
     };
   }, []);
+
+  // Auto-focus close button and trap Tab within modal
+  useEffect(() => {
+    if (closeButtonRef.current) {
+      closeButtonRef.current.focus();
+    }
+    const handleTabTrap = e => {
+      if (e.key !== 'Tab' || !modalRef.current) return;
+      const focusableSelectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+      const focusable = Array.from(modalRef.current.querySelectorAll(focusableSelectors)).filter(el => !el.closest('[aria-hidden]'));
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    };
+    document.addEventListener('keydown', handleTabTrap);
+    return () => document.removeEventListener('keydown', handleTabTrap);
+  }, []);
+
   if (!game) return null; // Safety check moved after hooks
 
   const isOwned = game.owned;
@@ -882,11 +940,16 @@ function GameDetailModal({
   };
   return /*#__PURE__*/React.createElement("div", {
     className: "fixed inset-0 z-[60] flex items-end md:items-center justify-center p-0 md:p-4 bg-[#000]/90 backdrop-blur-sm",
-    onClick: onClose
+    onClick: onClose,
+    role: "dialog",
+    "aria-modal": "true",
+    "aria-label": game.name
   }, /*#__PURE__*/React.createElement("div", {
+    ref: modalRef,
     className: "bg-[#1F1F1F] border-t md:border border-[#F1F1F1]/10 rounded-t-3xl md:rounded-3xl w-full max-w-4xl h-[95vh] md:h-auto md:max-h-[90vh] shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-10 md:fade-in md:zoom-in-95 duration-200 relative",
     onClick: handleContentClick
   }, /*#__PURE__*/React.createElement("button", {
+    ref: closeButtonRef,
     onClick: onClose,
     className: "absolute top-4 right-4 z-50 p-2.5 bg-black/20 hover:bg-black/40 backdrop-blur-md rounded-full text-white/80 hover:text-white border border-white/10 transition-all cursor-pointer leading-none"
   }, /*#__PURE__*/React.createElement("svg", {
@@ -975,11 +1038,11 @@ function GameDetailModal({
     className: "text-[#F1F1F1]/40 mb-1"
   }, "Paid"), /*#__PURE__*/React.createElement("div", {
     className: "text-[#F1F1F1]"
-  }, "Rs. ", parseInt(game.price).toLocaleString())), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+  }, game.price ? `Rs. ${parseInt(game.price).toLocaleString()}` : '-')), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "text-[#F1F1F1]/40 mb-1"
   }, "MSRP"), /*#__PURE__*/React.createElement("div", {
     className: "text-[#F1F1F1]/60"
-  }, "Rs. ", parseInt(game.msrp).toLocaleString())), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+  }, game.msrp ? `Rs. ${parseInt(game.msrp).toLocaleString()}` : '-')), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "text-[#F1F1F1]/40 mb-1"
   }, "Status"), /*#__PURE__*/React.createElement("div", {
     className: `${isOwned ? 'text-emerald-400' : 'text-red-400'}`
@@ -1428,38 +1491,46 @@ function App() {
   }, isRequestMode && /*#__PURE__*/React.createElement("div", {
     className: "mb-6 bg-[#C51728]/10 border border-[#C51728]/20 text-[#C51728] px-4 py-3 rounded-xl text-center text-sm md:text-base font-medium animate-slide-up"
   }, "Tap games to select for the meetup."),
-  /* Filter Chips Row */
+  /* Filter Chips Row — wrapped in relative container for scroll-hint gradient */
   !isRequestMode && /*#__PURE__*/React.createElement("div", {
-    className: "flex items-center gap-2 overflow-x-auto no-scrollbar mb-8 md:mb-10 -mt-2 md:-mt-4 pb-1"
+    className: "relative mb-8 md:mb-10 -mt-2 md:-mt-4"
   },
-    /*#__PURE__*/React.createElement("span", { className: "text-[10px] text-[#F1F1F1]/30 uppercase font-bold tracking-widest shrink-0" }, "Players"),
-    [2, 3, 4, 5, 8, 10, 12, 15].map(p => /*#__PURE__*/React.createElement("button", {
-      key: p,
-      onClick: () => setFilterPlayers(filterPlayers === p ? null : p),
-      className: `px-3 py-1.5 rounded-full border text-xs font-bold shrink-0 transition-all ${
-        filterPlayers === p
-          ? 'bg-[#C51728] border-[#C51728] text-white shadow-[0_0_10px_rgba(197,23,40,0.4)]'
-          : 'bg-[#F1F1F1]/5 border-[#F1F1F1]/10 text-[#F1F1F1]/60 hover:bg-[#F1F1F1]/10 hover:text-white'
-      }`
-    }, p)),
-    /*#__PURE__*/React.createElement("div", { className: "w-px h-5 bg-[#F1F1F1]/10 mx-1 shrink-0" }),
-    /*#__PURE__*/React.createElement("span", { className: "text-[10px] text-[#F1F1F1]/30 uppercase font-bold tracking-widest shrink-0" }, "Time"),
-    [['Quick', 'quick'], ['15–30m', '15-30'], ['30–45m', '30-45'], ['45–60m', '45-60'], ['60m+', '60+']].map(([label, val]) => /*#__PURE__*/React.createElement("button", {
-      key: val,
-      onClick: () => setFilterTime(filterTime === val ? null : val),
-      className: `px-3 py-1.5 rounded-full border text-xs font-bold shrink-0 transition-all ${
-        filterTime === val
-          ? 'bg-[#C51728] border-[#C51728] text-white shadow-[0_0_10px_rgba(197,23,40,0.4)]'
-          : 'bg-[#F1F1F1]/5 border-[#F1F1F1]/10 text-[#F1F1F1]/60 hover:bg-[#F1F1F1]/10 hover:text-white'
-      }`
-    }, label)),
-    (filterPlayers !== null || filterTime !== null) && /*#__PURE__*/React.createElement("button", {
-      onClick: () => { setFilterPlayers(null); setFilterTime(null); },
-      className: "ml-1 px-3 py-1.5 rounded-full border border-[#F1F1F1]/10 text-xs text-[#F1F1F1]/40 hover:text-white hover:border-[#F1F1F1]/30 shrink-0 transition-all"
-    }, "Clear")
+    /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center gap-2 overflow-x-auto no-scrollbar pb-1"
+    },
+      /*#__PURE__*/React.createElement("span", { className: "text-[10px] text-[#F1F1F1]/30 uppercase font-bold tracking-widest shrink-0" }, "Players"),
+      [2, 3, 4, 5, 8, 10, 12, 15].map(p => /*#__PURE__*/React.createElement("button", {
+        key: p,
+        onClick: () => setFilterPlayers(filterPlayers === p ? null : p),
+        className: `px-3 py-2.5 rounded-full border text-xs font-bold shrink-0 transition-all ${
+          filterPlayers === p
+            ? 'bg-[#C51728] border-[#C51728] text-white shadow-[0_0_10px_rgba(197,23,40,0.4)]'
+            : 'bg-[#F1F1F1]/5 border-[#F1F1F1]/10 text-[#F1F1F1]/60 hover:bg-[#F1F1F1]/10 hover:text-white'
+        }`
+      }, p)),
+      /*#__PURE__*/React.createElement("div", { className: "w-px h-5 bg-[#F1F1F1]/10 mx-1 shrink-0" }),
+      /*#__PURE__*/React.createElement("span", { className: "text-[10px] text-[#F1F1F1]/30 uppercase font-bold tracking-widest shrink-0" }, "Time"),
+      [['Quick', 'quick'], ['15–30m', '15-30'], ['30–45m', '30-45'], ['45–60m', '45-60'], ['60m+', '60+']].map(([label, val]) => /*#__PURE__*/React.createElement("button", {
+        key: val,
+        onClick: () => setFilterTime(filterTime === val ? null : val),
+        className: `px-3 py-2.5 rounded-full border text-xs font-bold shrink-0 transition-all ${
+          filterTime === val
+            ? 'bg-[#C51728] border-[#C51728] text-white shadow-[0_0_10px_rgba(197,23,40,0.4)]'
+            : 'bg-[#F1F1F1]/5 border-[#F1F1F1]/10 text-[#F1F1F1]/60 hover:bg-[#F1F1F1]/10 hover:text-white'
+        }`
+      }, label)),
+      (filterPlayers !== null || filterTime !== null) && /*#__PURE__*/React.createElement("button", {
+        onClick: () => { setFilterPlayers(null); setFilterTime(null); },
+        className: "ml-1 px-3 py-2.5 rounded-full border border-[#F1F1F1]/10 text-xs text-[#F1F1F1]/40 hover:text-white hover:border-[#F1F1F1]/30 shrink-0 transition-all"
+      }, "Clear")
+    ),
+    /* Scroll hint gradient — visible on mobile to indicate more chips are off-screen */
+    /*#__PURE__*/React.createElement("div", {
+      className: "pointer-events-none absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#1F1F1F] to-transparent"
+    })
   ),
   /*#__PURE__*/React.createElement("div", {
-    className: "flex flex-col md:flex-row gap-4 md:gap-6 mb-8 md:mb-12"
+    className: "flex flex-col md:flex-row gap-4 md:gap-6 mb-4 md:mb-6"
   }, /*#__PURE__*/React.createElement("div", {
     className: "relative flex-1 group"
   }, /*#__PURE__*/React.createElement("span", {
@@ -1515,10 +1586,13 @@ function App() {
     className: "w-px h-6 bg-[#F1F1F1]/10 mx-1"
   }), /*#__PURE__*/React.createElement("button", {
     onClick: () => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc'),
-    className: "p-2 hover:bg-[#F1F1F1]/10 rounded-lg transition-colors text-[#F1F1F1]/60 hover:text-white shrink-0"
+    title: sortOrder === 'asc' ? 'Sort Descending' : 'Sort Ascending',
+    className: "px-2 py-1 hover:bg-[#F1F1F1]/10 rounded-lg transition-colors text-[#F1F1F1]/60 hover:text-white shrink-0 flex items-center gap-1 text-xs font-bold"
   }, /*#__PURE__*/React.createElement(Icons.SortAsc, {
-    className: sortOrder === 'desc' ? 'rotate-180' : ''
-  }))), /*#__PURE__*/React.createElement("div", {
+    className: sortOrder === 'desc' ? 'rotate-180 transition-transform' : 'transition-transform'
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "hidden sm:inline"
+  }, sortBy === 'name' ? (sortOrder === 'asc' ? 'A→Z' : 'Z→A') : (sortOrder === 'asc' ? 'Low→High' : 'High→Low')))), /*#__PURE__*/React.createElement("div", {
     className: "bg-[#F1F1F1]/5 rounded-2xl p-1 flex items-center border border-[#F1F1F1]/5 shrink-0"
   }, /*#__PURE__*/React.createElement(ViewToggle, {
     active: viewMode === 'grid',
@@ -1528,7 +1602,28 @@ function App() {
     active: viewMode === 'list',
     onClick: () => setViewMode('list'),
     icon: Icons.List
-  })))), fetchError ? /*#__PURE__*/React.createElement("div", {
+  })))),
+  /* Active filter badges — persisted indicator visible regardless of scroll position */
+  !isRequestMode && (filterPlayers !== null || filterTime !== null) && /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 flex-wrap mb-6 md:mb-8"
+  },
+    /*#__PURE__*/React.createElement("span", { className: "text-[10px] text-[#F1F1F1]/30 uppercase font-bold tracking-widest" }, "Active filters:"),
+    filterPlayers !== null && /*#__PURE__*/React.createElement("button", {
+      onClick: () => setFilterPlayers(null),
+      className: "flex items-center gap-1.5 px-3 py-1 bg-[#C51728]/15 border border-[#C51728]/30 text-[#C51728] rounded-full text-xs font-bold hover:bg-[#C51728]/25 transition-colors"
+    }, /*#__PURE__*/React.createElement(Icons.Users, { className: "w-3 h-3" }), `${filterPlayers} players`, /*#__PURE__*/React.createElement(Icons.X, { className: "w-3 h-3 opacity-70" })),
+    filterTime !== null && /*#__PURE__*/React.createElement("button", {
+      onClick: () => setFilterTime(null),
+      className: "flex items-center gap-1.5 px-3 py-1 bg-[#C51728]/15 border border-[#C51728]/30 text-[#C51728] rounded-full text-xs font-bold hover:bg-[#C51728]/25 transition-colors"
+    }, /*#__PURE__*/React.createElement(Icons.Clock, { className: "w-3 h-3" }),
+      filterTime === 'quick' ? 'Quick (≤15m)' :
+      filterTime === '15-30' ? '15–30m' :
+      filterTime === '30-45' ? '30–45m' :
+      filterTime === '45-60' ? '45–60m' : '60m+',
+      /*#__PURE__*/React.createElement(Icons.X, { className: "w-3 h-3 opacity-70" })
+    )
+  ),
+  fetchError ? /*#__PURE__*/React.createElement("div", {
     className: "flex flex-col items-center justify-center py-32 text-center"
   }, /*#__PURE__*/React.createElement("div", {
     className: "text-4xl mb-4"
@@ -1566,8 +1661,20 @@ function App() {
     isSelected: selectedRequestGames.some(g => g.id === game.id),
     onToggleSelect: handleToggleSelect
   }))), filteredGames.length === 0 && /*#__PURE__*/React.createElement("div", {
-    className: "col-span-full py-24 text-center text-[#F1F1F1]/40"
-  }, "No games found"), !searchTerm && unownedGames.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "col-span-full py-24 text-center"
+  },
+    (filterPlayers !== null || filterTime !== null) && !searchTerm
+      ? /*#__PURE__*/React.createElement(React.Fragment, null,
+          /*#__PURE__*/React.createElement("div", { className: "text-4xl mb-4" }, "🎲"),
+          /*#__PURE__*/React.createElement("p", { className: "text-[#F1F1F1]/60 font-bold mb-1" }, "No games match these filters"),
+          /*#__PURE__*/React.createElement("p", { className: "text-xs text-[#F1F1F1]/30 mb-6" }, "Try adjusting the player count or time filters"),
+          /*#__PURE__*/React.createElement("button", {
+            onClick: () => { setFilterPlayers(null); setFilterTime(null); },
+            className: "px-5 py-2.5 bg-[#C51728] text-white rounded-full text-sm font-bold hover:bg-[#a81422] transition-colors"
+          }, "Clear Filters")
+        )
+      : /*#__PURE__*/React.createElement("p", { className: "text-[#F1F1F1]/40" }, "No games found")
+  ), !searchTerm && unownedGames.length > 0 && /*#__PURE__*/React.createElement("div", {
     className: "mt-16 border-t border-[#F1F1F1]/5 pt-12"
   }, /*#__PURE__*/React.createElement("h2", {
     className: "text-xl font-serif-italic text-[#F1F1F1]/40 mb-8 text-center flex items-center justify-center gap-4"
